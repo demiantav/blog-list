@@ -2,7 +2,7 @@ POST http://localhost:3003/api/blogs/
 Content-Type: application/json
 
 {
-    "title":"Hola",
+    "title":"3 de febrero",
     "author":"Onlines",
     "url":"https://onlines.com.ar/",
     "likes":59

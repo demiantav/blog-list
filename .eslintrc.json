@@ -14,6 +14,7 @@
     "import/extensions": "off",
     "no-underscore-dangle": "off",
     "no-unused-vars": "warn",
-    "object-curly-newline": "off"
+    "object-curly-newline": "off",
+    "consistent-return": "off"
   }
 }
