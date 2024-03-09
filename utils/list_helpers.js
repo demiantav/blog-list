@@ -62,7 +62,7 @@ const listWithOneBlog = [
     title: 'Type wars',
     author: 'Robert C. Martin',
     url: 'http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html',
-    likes: 2,
+    likes: 20000,
     __v: 0,
   },
   {
@@ -86,7 +86,7 @@ const listWithOneBlog = [
     title: 'Type wars',
     author: 'Pepo',
     url: 'http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html',
-    likes: 2,
+    likes: 3,
     __v: 0,
   },
   {
@@ -147,7 +147,28 @@ const mostBlogs = (blogs) => {
   return winner;
 };
 
-//console.log(favoriteBlog(listWithOneBlog));
+const mostLikes = (blogs) => {
+  const authors = blogs.reduce((accumulator, { author, likes }) => {
+    accumulator[author] = (accumulator[author] || 0) + likes;
+    return accumulator;
+  }, {});
+
+  const winner = Object.keys(authors).reduce(
+    (accumulator, author) => {
+      if (authors[author] > accumulator.likes) {
+        accumulator.author = author;
+        accumulator.likes = authors[author];
+      }
+      return accumulator;
+    },
+    { author: '', likes: 0 }
+  );
+
+  return winner;
+};
+console.log(favoriteBlog(listWithOneBlog));
 console.log(mostBlogs(listWithOneBlog));
+console.log(totalLikes(listWithOneBlog));
+console.log(mostLikes(listWithOneBlog));
 
 export { dummy, totalLikes, favoriteBlog };
