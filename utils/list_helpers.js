@@ -12,9 +12,25 @@ const listWithOneBlog = [
   {
     _id: '5a422aa71b54a676234d17f8',
     title: 'Go To Statement Considered Harmful',
-    author: 'Edsger W. Dijkstra',
+    author: 'Pepo',
     url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
     likes: 5,
+    __v: 0,
+  },
+  {
+    _id: '5a422b3a1b54a676234d17f9',
+    title: 'Canonical string reduction',
+    author: 'Edsger W. Dijkstra',
+    url: 'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html',
+    likes: 12,
+    __v: 0,
+  },
+  {
+    _id: '5a422b3a1b54a676234d17f9',
+    title: 'Canonical string reduction',
+    author: 'Edsger W. Dijkstra',
+    url: 'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html',
+    likes: 12,
     __v: 0,
   },
   {
@@ -36,7 +52,7 @@ const listWithOneBlog = [
   {
     _id: '5a422ba71b54a676234d17fb',
     title: 'TDD harms architecture',
-    author: 'Robert C. Martin',
+    author: 'Pepo',
     url: 'http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html',
     likes: 458,
     __v: 0,
@@ -46,7 +62,39 @@ const listWithOneBlog = [
     title: 'Type wars',
     author: 'Robert C. Martin',
     url: 'http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html',
-    likes: 10000,
+    likes: 2,
+    __v: 0,
+  },
+  {
+    _id: '5a422bc61b54a676234d17fc',
+    title: 'Type wars',
+    author: 'Pepo',
+    url: 'http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html',
+    likes: 2,
+    __v: 0,
+  },
+  {
+    _id: '5a422bc61b54a676234d17fc',
+    title: 'Type wars',
+    author: 'Pepo',
+    url: 'http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html',
+    likes: 2,
+    __v: 0,
+  },
+  {
+    _id: '5a422bc61b54a676234d17fc',
+    title: 'Type wars',
+    author: 'Pepo',
+    url: 'http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html',
+    likes: 2,
+    __v: 0,
+  },
+  {
+    _id: '5a422bc61b54a676234d17fc',
+    title: 'Type wars',
+    author: 'Pepo',
+    url: 'http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html',
+    likes: 2,
     __v: 0,
   },
 ];
@@ -60,6 +108,46 @@ const favoriteBlog = (blogs) => {
   return blogs.reduce((previous, actual) => (actual.likes >= previous.likes ? actual : previous));
 };
 
-console.log(favoriteBlog(listWithOneBlog));
+const mostBlogs = (blogs) => {
+  const authors = new Set();
+  const arrayAuthors = [];
+
+  blogs.forEach((blog) => authors.add(blog.author));
+
+  authors.forEach((author) => {
+    arrayAuthors.push({
+      name: author,
+      blogs: 0,
+    });
+  });
+
+  blogs.forEach((blog) => {
+    if (authors.has(blog.author)) {
+      arrayAuthors.forEach((author) => {
+        if (author.name === blog.author) {
+          // eslint-disable-next-line no-param-reassign
+          author.blogs += 1;
+        }
+      });
+    }
+  });
+
+  const winner = arrayAuthors.reduce(
+    (accumulator, actual) => {
+      if (actual.blogs >= accumulator.blogs) {
+        accumulator.author = actual.name;
+        accumulator.blogs = actual.blogs;
+      }
+
+      return accumulator;
+    },
+    { author: '', blogs: 0 }
+  );
+
+  return winner;
+};
+
+//console.log(favoriteBlog(listWithOneBlog));
+console.log(mostBlogs(listWithOneBlog));
 
 export { dummy, totalLikes, favoriteBlog };
