@@ -102,12 +102,14 @@ const listWithOneBlog = [
 // eslint-disable-next-line max-len
 const totalLikes = (blogs) => (blogs.length === 0 ? 0 : blogs.reduce((acumulator, actual) => acumulator + actual.likes, 0));
 
+// Blog con mas cantidad de likes
 const favoriteBlog = (blogs) => {
   if (blogs.length === 0) return 'No se ha pasado ningún blog para evaluar';
 
   return blogs.reduce((previous, actual) => (actual.likes >= previous.likes ? actual : previous));
 };
 
+// Autor con mas blogs
 const mostBlogs = (blogs) => {
   const authors = new Set();
   const arrayAuthors = [];
@@ -147,6 +149,7 @@ const mostBlogs = (blogs) => {
   return winner;
 };
 
+// Autor con mas likes
 const mostLikes = (blogs) => {
   const authors = blogs.reduce((accumulator, { author, likes }) => {
     accumulator[author] = (accumulator[author] || 0) + likes;

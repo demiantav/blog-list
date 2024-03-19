@@ -2,7 +2,7 @@ POST http://localhost:3003/api/blogs/
 Content-Type: application/json
 
 {
-    "title":"3 de febrero",
+    "title":"Aprender a cantar",
     "author":"Onlines",
     "url":"https://onlines.com.ar/",
     "likes":59

@@ -4,15 +4,16 @@ import Blog from '../models/blog.js';
 
 const blogRouter = Router();
 
-blogRouter.get('/', (request, response, next) => {
-  Blog.find({})
-    .then((res) => {
-      response.json(res);
-    })
-    .catch((error) => next(error));
+blogRouter.get('/', async (request, response, next) => {
+  try {
+    const blogs = await Blog.find({});
+    response.json(blogs);
+  } catch (error) {
+    next(error);
+  }
 });
 
-blogRouter.post('/', (request, response, next) => {
+blogRouter.post('/', async (request, response, next) => {
   const { body } = request;
   const { title, author, url, likes } = body;
 
@@ -23,13 +24,12 @@ blogRouter.post('/', (request, response, next) => {
     likes,
   });
 
-  newBlog
-    .save()
-    .then((savedBlog) => {
-      console.log('Blog guardado');
-      response.json(savedBlog);
-    })
-    .catch((error) => next(error));
+  try {
+    const blogSended = await newBlog.save();
+    response.status(201).json(blogSended);
+  } catch (error) {
+    next(error);
+  }
 });
 
 export default blogRouter;
