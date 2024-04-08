@@ -22,10 +22,14 @@ mongoose
 
 app.use(express.json());
 app.use(cors());
+
 app.use(middleware.requestLogger);
+app.use(middleware.propertyDefault);
+app.use(middleware.noTitle);
 app.use('/api/blogs', blogRouter);
 
 app.use(middleware.unknownEndpoint);
+
 app.use(middleware.errorHandler);
 
 export default app;

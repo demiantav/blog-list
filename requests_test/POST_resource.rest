@@ -2,8 +2,9 @@ POST http://localhost:3003/api/blogs/
 Content-Type: application/json
 
 {
-    "title":"Aprender a cantar",
-    "author":"Onlines",
-    "url":"https://onlines.com.ar/",
-    "likes":59
+    "title": "Furio",
+    "author": "Prueba 04/04",
+    "url": "www.pepito.com",
+    "likes": 5000
+    
 }

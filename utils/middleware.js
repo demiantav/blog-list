@@ -23,4 +23,19 @@ const errorHandler = (error, response) => {
   }
 };
 
-export default { requestLogger, errorHandler, unknownEndpoint };
+const propertyDefault = (request, response, next) => {
+  if (!request.body.hasOwnProperty('likes')) {
+    request.body.likes = 0;
+  }
+  next();
+};
+
+const noTitle = (request, response, next) => {
+  if (!request.body.hasOwnProperty('title') && request.method === 'POST') {
+    return response.status(400).json({ error: 'Title or Url no exists' });
+  }
+
+  next(); // Llama a next() para pasar la solicitud al siguiente middleware
+};
+
+export default { requestLogger, errorHandler, unknownEndpoint, propertyDefault, noTitle };
