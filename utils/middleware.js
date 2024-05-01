@@ -1,13 +1,11 @@
 import loggers from './loggers.js';
 
 const requestLogger = (request, response, next) => {
-  console.log({
+  loggers.info({
     method: request.method,
     body: request.body,
     path: request.path,
   });
-
-  console.log('che');
 
   next();
 };
@@ -23,10 +21,6 @@ const errorHandler = (error, response, next) => {
 
   if (error.name === 'ValidationError') {
     return response.status(400).json({ error: error.message });
-  }
-
-  if (error.name === 'MongoServerError' && error.code === 11000) {
-    return response.status(400).json({ error: 'expected `username` to be unique' });
   }
 
   next(error);
@@ -47,4 +41,5 @@ const noTitle = (request, response, next) => {
   next(); // Llama a next() para pasar la solicitud al siguiente middleware
 };
 
+// eslint-disable-next-line max-len
 export default { requestLogger, errorHandler, unknownEndpoint, propertyDefault, noTitle };

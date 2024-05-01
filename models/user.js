@@ -7,7 +7,10 @@ const userSchema = new mongoose.Schema({
     unique: true,
   },
   name: String,
-  hashPassword: String,
+  hashPassword: {
+    type: String,
+    require: true,
+  },
   blog: [
     {
       type: mongoose.Schema.Types.ObjectId,

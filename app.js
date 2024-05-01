@@ -23,11 +23,10 @@ mongoose
 
 app.use(express.json());
 app.use(cors());
+app.use(middleware.requestLogger);
 
 app.use('/api/blogs', blogRouter);
 app.use('/api/users', userRouter);
-
-app.use(middleware.requestLogger);
 
 app.use(middleware.unknownEndpoint);
 

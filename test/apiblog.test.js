@@ -113,7 +113,7 @@ const api = supertest(app);
 describe('Unit tests for Users creation', () => {
   beforeEach(async () => {
     await User.deleteMany({});
-    const hashPassword = await bcrypt.hash('123', 10);
+    const hashPassword = await bcrypt.hash('12345', 10);
 
     const uniqueUser = new User({
       userName: 'PepoTest',
@@ -162,6 +162,47 @@ describe('Unit tests for Users creation', () => {
     const usersUpdate = await helper.usersDb();
 
     assert.strictEqual(usersUpdate.length, initialUsers.length);
+  });
+
+  test('user without username or password can not be created', async () => {
+    const usersAtStart = await helper.usersDb();
+
+    const user = {
+      name: 'Diana',
+      password: 'Dedo',
+    };
+
+    const result = await api
+      .post('/api/users')
+      .send(user)
+      .expect(400)
+      .expect('Content-Type', /application\/json/);
+
+    const usersAtEnd = await helper.usersDb();
+
+    assert.strictEqual(usersAtEnd.length, usersAtStart.length);
+    assert(result.body.error.includes('No username or password'));
+  });
+
+  test('user must be at last three characters', async () => {
+    const usersAtStart = await helper.usersDb();
+
+    const user = {
+      userName: 'Diana',
+      name: 'Diana',
+      password: 'D',
+    };
+
+    const response = await api
+      .post('/api/users')
+      .send(user)
+      .expect(400)
+      .expect('Content-Type', /application\/json/);
+
+    const usersAtEnd = await helper.usersDb();
+
+    assert.strictEqual(usersAtEnd.length, usersAtStart.length);
+    assert(response.body.error.includes('userName or password must be at least three character'));
   });
 });
 
