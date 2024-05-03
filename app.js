@@ -6,6 +6,7 @@ import userRouter from './controllers/users.js';
 import config from './utils/config.js';
 import loggers from './utils/loggers.js';
 import middleware from './utils/middleware.js';
+import loginRouter from './controllers/login.js';
 
 const app = express();
 
@@ -27,6 +28,7 @@ app.use(middleware.requestLogger);
 
 app.use('/api/blogs', blogRouter);
 app.use('/api/users', userRouter);
+app.use('/api/login', loginRouter);
 
 app.use(middleware.propertyDefault);
 app.use(middleware.noTitle);
