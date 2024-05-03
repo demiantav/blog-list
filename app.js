@@ -28,11 +28,10 @@ app.use(middleware.requestLogger);
 app.use('/api/blogs', blogRouter);
 app.use('/api/users', userRouter);
 
-app.use(middleware.unknownEndpoint);
-
 app.use(middleware.propertyDefault);
 app.use(middleware.noTitle);
 
 app.use(middleware.errorHandler);
+app.use(middleware.unknownEndpoint);
 
 export default app;

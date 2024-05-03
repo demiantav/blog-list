@@ -204,6 +204,34 @@ describe('Unit tests for Users creation', () => {
     assert.strictEqual(usersAtEnd.length, usersAtStart.length);
     assert(response.body.error.includes('userName or password must be at least three character'));
   });
+
+  test('a blog with a user assigned exists', async () => {
+    const hashPassword = await bcrypt.hash('bilurin', 10);
+
+    const newUser = new User({
+      userName: 'Test',
+      name: 'Pepsi',
+      hashPassword,
+    });
+
+    await newUser.save();
+
+    const blogWithUserId = {
+      title: 'prueba-test',
+      author: 'Prueba 04/04',
+      url: 'www.pepito.com',
+      likes: 5000,
+      id: `${newUser._id}`,
+    };
+
+    const blogSaved = await api
+      .post('/api/blogs')
+      .send(blogWithUserId)
+      .expect(201)
+      .expect('Content-Type', /application\/json/);
+
+    assert(blogSaved.body.author.includes('Prueba 04/04'));
+  });
 });
 
 after(async () => {

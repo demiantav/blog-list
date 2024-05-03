@@ -1,12 +1,13 @@
 import { Router } from 'express';
 
 import Blog from '../models/blog.js';
+import User from '../models/user.js';
 
 const blogRouter = Router();
 
 blogRouter.get('/', async (request, response, next) => {
   try {
-    const blogs = await Blog.find({});
+    const blogs = await Blog.find({}).populate('userId', { userName: 1, name: 1 });
     response.json(blogs);
   } catch (error) {
     next(error);
@@ -15,17 +16,22 @@ blogRouter.get('/', async (request, response, next) => {
 
 blogRouter.post('/', async (request, response, next) => {
   const { body } = request;
-  const { title, author, url, likes } = body;
+  const { title, author, url, likes, id } = body;
+
+  const userAssigned = await User.findById(id);
 
   const newBlog = new Blog({
     title,
     author,
     url,
     likes,
+    userId: id,
   });
 
   try {
     const blogSended = await newBlog.save();
+    userAssigned.blogs = userAssigned.blogs.concat(blogSended._id);
+    await userAssigned.save();
     response.status(201).json(blogSended);
   } catch (error) {
     next(error);
