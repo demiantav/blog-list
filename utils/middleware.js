@@ -1,3 +1,4 @@
+import { get } from 'mongoose';
 import loggers from './loggers.js';
 
 const requestLogger = (request, response, next) => {
@@ -41,5 +42,15 @@ const noTitle = (request, response, next) => {
   next(); // Llama a next() para pasar la solicitud al siguiente middleware
 };
 
+const getToken = (request, response, next) => {
+  const authorization = request.get('authorization');
+
+  if (authorization && authorization.startsWith('Bearer ')) {
+    request.body.token = authorization.replace('Bearer ', '');
+  } else request.body.token = null;
+
+  next();
+};
+
 // eslint-disable-next-line max-len
-export default { requestLogger, errorHandler, unknownEndpoint, propertyDefault, noTitle };
+export default { requestLogger, errorHandler, unknownEndpoint, propertyDefault, noTitle, getToken };

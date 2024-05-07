@@ -1,11 +1,12 @@
 POST http://localhost:3003/api/blogs/
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6Im1pYW1vcmVsdmlyYSIsImlkIjoiNjYzNjg5ZDJiNzU1NmM1NWNkNmUzNTVhIiwiaWF0IjoxNzE1MDIxMDQ3fQ.ETiUzIOEd1Kl9mrdIsUqDuFoDafYdzTFxYwCV7k5Odw
 
 {
-    "title":"prueba-test",
-    "author": "Prueba 2 3/5",
+    "title":"prueba elvira a eliminar",
+    "author": "Prueba 2  4/5",
     "url": "www.pepito.com",
-    "likes": 5000,
-    "id": "6634fcafa21000dcb63cb85a"
+    "likes": 5000
+    
     
 }

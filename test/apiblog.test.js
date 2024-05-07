@@ -7,6 +7,7 @@ import app from '../app.js';
 import Blog from '../models/blog.js';
 import User from '../models/user.js';
 import helper from './blogtest_helper.js';
+import jwt from 'jsonwebtoken';
 
 const api = supertest(app);
 
@@ -237,6 +238,7 @@ const api = supertest(app);
 describe('Unit tests for Users login', () => {
   beforeEach(async () => {
     await User.deleteMany({});
+    await Blog.deleteMany({});
 
     const hashPassword = await bcrypt.hash('345', 10);
 
@@ -262,6 +264,71 @@ describe('Unit tests for Users login', () => {
       .send(userToLogin)
       .expect(200)
       .expect('content-type', /application\/json/);
+  });
+
+  test('only a user logged can post a note', async () => {
+    const userToLogin = {
+      userName: 'Pepe',
+      password: '345',
+    };
+
+    const userLogged = await api
+      .post('/api/login')
+      .send(userToLogin)
+      .expect(200)
+      .expect('content-type', /application\/json/);
+
+    const { token } = userLogged.body;
+
+    const blog = {
+      title: 'blog asociado a usuario',
+      author: 'Prueba 04/05',
+      url: 'www.pepito.com',
+      likes: 5000,
+    };
+
+    const savedBlog = await api
+      .post('/api/blogs')
+      .set('Authorization', `Bearer ${token}`)
+      .send(blog)
+      .expect(201)
+      .expect('content-type', /application\/json/);
+
+    assert(savedBlog.body.title.includes('blog asociado'));
+  });
+
+  test('a blog can be deleted only by the user who created', async () => {
+    const userToLogin = {
+      userName: 'Pepe',
+      password: '345',
+    };
+
+    const userLogged = await api
+      .post('/api/login')
+      .send(userToLogin)
+      .expect(200)
+      .expect('content-type', /application\/json/);
+
+    const { token } = userLogged.body;
+
+    const blog = {
+      title: 'blog asociado a usuario',
+      author: 'Prueba 04/05',
+      url: 'www.pepito.com',
+      likes: 5000,
+    };
+
+    const savedBlog = await api
+      .post('/api/blogs')
+      .set('Authorization', `Bearer ${token}`)
+      .send(blog)
+      .expect(201)
+      .expect('content-type', /application\/json/);
+
+    const { id } = savedBlog.body;
+    console.log(savedBlog.body);
+
+    await api.delete(`/api/blogs/${id}`).set('Authorization', `Bearer ${token}`).expect(204);
   });
 });
 

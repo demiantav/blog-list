@@ -1,5 +1,6 @@
 import { Router } from 'express';
 
+import jwt from 'jsonwebtoken';
 import Blog from '../models/blog.js';
 import User from '../models/user.js';
 
@@ -15,17 +16,22 @@ blogRouter.get('/', async (request, response, next) => {
 });
 
 blogRouter.post('/', async (request, response, next) => {
-  const { body } = request;
-  const { title, author, url, likes, id } = body;
+  const { title, author, url, likes, token } = request.body;
 
-  const userAssigned = await User.findById(id);
+  const tokenExtraction = jwt.verify(token, process.env.SECRET);
+
+  if (!tokenExtraction.id) {
+    return response.status(400).json({ error: 'Invalid token' });
+  }
+
+  const userAssigned = await User.findById(tokenExtraction.id);
 
   const newBlog = new Blog({
     title,
     author,
     url,
     likes,
-    userId: id,
+    userId: userAssigned._id,
   });
 
   try {
@@ -52,10 +58,20 @@ blogRouter.put('/:id', async (request, response, next) => {
 
 blogRouter.delete('/:id', async (request, response, next) => {
   const { id } = request.params;
+  const { token } = request.body;
+
+  const tokenExtraction = jwt.verify(token, process.env.SECRET);
+
+  if (!tokenExtraction.id) {
+    return response.status(400).json({ error: 'Invalid token' });
+  }
 
   try {
-    await Blog.findByIdAndDelete(id);
-    response.status(204).end();
+    const blogToDelete = await Blog.findById(id);
+    if (blogToDelete.userId.toString() === tokenExtraction.id.toString()) {
+      await Blog.findByIdAndDelete(id);
+      return response.status(204).end();
+    } else return response.status(400).json({ error: 'Invalid blog to eliminate' });
   } catch (error) {
     next(error);
   }
