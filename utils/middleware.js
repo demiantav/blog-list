@@ -1,5 +1,7 @@
 import { get } from 'mongoose';
+import jwt from 'jsonwebtoken';
 import loggers from './loggers.js';
+import User from '../models/user.js';
 
 const requestLogger = (request, response, next) => {
   loggers.info({
@@ -22,6 +24,10 @@ const errorHandler = (error, response, next) => {
 
   if (error.name === 'ValidationError') {
     return response.status(400).json({ error: error.message });
+  }
+
+  if (error.name === 'JsonWebTokenError') {
+    return response.status(401).json({ error: error.message });
   }
 
   next(error);
@@ -47,10 +53,29 @@ const getToken = (request, response, next) => {
 
   if (authorization && authorization.startsWith('Bearer ')) {
     request.body.token = authorization.replace('Bearer ', '');
-  } else request.body.token = null;
+  } else {
+    request.body.token = null;
+  }
 
   next();
 };
 
+const getUser = async (request, response, next) => {
+  const { token } = request.body;
+  if (!token) {
+    response.status(401).json({ error: 'Authorization failed' });
+  } else {
+    const tokenExtraction = jwt.verify(token, process.env.SECRET);
+
+    if (!tokenExtraction.id) {
+      return response.status(400).json({ error: 'Invalid token' });
+    }
+
+    request.body.user = await User.findById(tokenExtraction.id);
+
+    next();
+  }
+};
+
 // eslint-disable-next-line max-len
-export default { requestLogger, errorHandler, unknownEndpoint, propertyDefault, noTitle, getToken };
+export default { requestLogger, errorHandler, unknownEndpoint, propertyDefault, noTitle, getToken, getUser };

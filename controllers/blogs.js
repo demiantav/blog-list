@@ -3,7 +3,7 @@ import { Router } from 'express';
 import jwt from 'jsonwebtoken';
 import Blog from '../models/blog.js';
 import User from '../models/user.js';
-
+import middleware from '../utils/middleware.js';
 const blogRouter = Router();
 
 blogRouter.get('/', async (request, response, next) => {
@@ -14,17 +14,14 @@ blogRouter.get('/', async (request, response, next) => {
     next(error);
   }
 });
+blogRouter.post('/', middleware.getToken);
+blogRouter.post('/', middleware.noTitle);
+blogRouter.post('/', middleware.propertyDefault);
 
-blogRouter.post('/', async (request, response, next) => {
-  const { title, author, url, likes, token } = request.body;
+blogRouter.post('/', middleware.getUser, async (request, response, next) => {
+  const { title, author, url, likes, user } = request.body;
 
-  const tokenExtraction = jwt.verify(token, process.env.SECRET);
-
-  if (!tokenExtraction.id) {
-    return response.status(400).json({ error: 'Invalid token' });
-  }
-
-  const userAssigned = await User.findById(tokenExtraction.id);
+  const userAssigned = user;
 
   const newBlog = new Blog({
     title,
@@ -56,19 +53,13 @@ blogRouter.put('/:id', async (request, response, next) => {
   }
 });
 
-blogRouter.delete('/:id', async (request, response, next) => {
+blogRouter.delete('/:id', middleware.getToken, middleware.getUser, async (request, response, next) => {
   const { id } = request.params;
-  const { token } = request.body;
-
-  const tokenExtraction = jwt.verify(token, process.env.SECRET);
-
-  if (!tokenExtraction.id) {
-    return response.status(400).json({ error: 'Invalid token' });
-  }
+  const { user } = request.body;
 
   try {
     const blogToDelete = await Blog.findById(id);
-    if (blogToDelete.userId.toString() === tokenExtraction.id.toString()) {
+    if (blogToDelete.userId.toString() === user.id.toString()) {
       await Blog.findByIdAndDelete(id);
       return response.status(204).end();
     } else return response.status(400).json({ error: 'Invalid blog to eliminate' });
