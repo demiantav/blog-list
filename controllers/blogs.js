@@ -28,14 +28,15 @@ blogRouter.post('/', middleware.getUser, async (request, response, next) => {
     author,
     url,
     likes,
-    userId: userAssigned._id,
+    userId: user._id,
   });
-
   try {
     const blogSended = await newBlog.save();
     userAssigned.blogs = userAssigned.blogs.concat(blogSended._id);
     await userAssigned.save();
-    response.status(201).json(blogSended);
+
+    const populatedBlog = await blogSended.populate('userId', { userName: 1 });
+    response.status(201).json(populatedBlog);
   } catch (error) {
     next(error);
   }
@@ -46,26 +47,35 @@ blogRouter.put('/:id', async (request, response, next) => {
   const { likes } = body;
 
   try {
-    const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, { likes }, { new: true, runValidators: true, context: 'query' });
+    const updatedBlog = await Blog.findByIdAndUpdate(
+      request.params.id,
+      { likes },
+      { new: true, runValidators: true, context: 'query' }
+    );
     response.json(updatedBlog);
   } catch (error) {
     next(error);
   }
 });
 
-blogRouter.delete('/:id', middleware.getToken, middleware.getUser, async (request, response, next) => {
-  const { id } = request.params;
-  const { user } = request.body;
+blogRouter.delete(
+  '/:id',
+  middleware.getToken,
+  middleware.getUser,
+  async (request, response, next) => {
+    const { id } = request.params;
+    const { user } = request.body;
 
-  try {
-    const blogToDelete = await Blog.findById(id);
-    if (blogToDelete.userId.toString() === user.id.toString()) {
-      await Blog.findByIdAndDelete(id);
-      return response.status(204).end();
-    } else return response.status(400).json({ error: 'Invalid blog to eliminate' });
-  } catch (error) {
-    next(error);
+    try {
+      const blogToDelete = await Blog.findById(id);
+      if (blogToDelete.userId.toString() === user.id.toString()) {
+        await Blog.findByIdAndDelete(id);
+        return response.status(204).end();
+      } else return response.status(400).json({ error: 'Invalid blog to eliminate' });
+    } catch (error) {
+      next(error);
+    }
   }
-});
+);
 
 export default blogRouter;

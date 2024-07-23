@@ -1,11 +1,11 @@
 POST http://localhost:3003/api/blogs/
 Content-Type: application/json
-Authorization: Bearer 3
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6Im1pYW1vcmVsdmlyYSIsImlkIjoiNjYzNjg5ZDJiNzU1NmM1NWNkNmUzNTVhIiwiaWF0IjoxNzIxNTkzNjk2fQ.0ov4VlDLnoZFeA_bTVXtXbbeTYto4hK8cIkGNxRcAfk
 
 {
-    "title": "prueba elvira a eliminar without malformatted token",
-    "author": "Prueba 6 7/5",
+    "title": "json",
+    "author": "Rafi",
     "url": "www.pepito.com",
-    "likes": 5000
+    "likes": 200000000
     
 }
