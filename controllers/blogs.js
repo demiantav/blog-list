@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 import Blog from '../models/blog.js';
 import User from '../models/user.js';
 import middleware from '../utils/middleware.js';
+
 const blogRouter = Router();
 
 blogRouter.get('/', async (request, response, next) => {
