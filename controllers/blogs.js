@@ -43,6 +43,23 @@ blogRouter.post('/', middleware.getUser, async (request, response, next) => {
   }
 });
 
+blogRouter.post('/:id/comments', async (request, response, next) => {
+  const { comment } = request.body;
+  const { id } = request.params;
+
+  try {
+    const blog = await Blog.findByIdAndUpdate(
+      id,
+      { $push: { comments: comment } },
+      { new: true }
+    );
+
+    response.status(200).json(blog);
+  } catch (error) {
+    next(error);
+  }
+});
+
 blogRouter.put('/:id', async (request, response, next) => {
   const { body } = request;
   const { likes } = body;
